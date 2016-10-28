@@ -2,7 +2,6 @@ cc=gcc
 cflags=-Wall -Wextra -pedantic -std=c99 -g
 
 %.o: %.c %.h
-	echo $(cc) $(cflags) -c $< -o $@
 	$(cc) $(cflags) -c $< -o $@
 
 hashtable_test: hashtable.o hashtable_test.c
