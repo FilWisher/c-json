@@ -3,9 +3,9 @@ json parser in c
 
 parse common json-like structures
 
-# data types
+## data types
 
-## value_t
+### typedef enum value_t
 types of value defined by JSON spec
 ```
 P_STRING
@@ -16,7 +16,7 @@ P_BOOLEAN
 P_NULL
 ```
 
-## struct json
+### struct json
 an AST node with:
 ```c
 value_t typ;  // represents type of JSON value
@@ -28,7 +28,7 @@ union {
 } val;
 ```
 
-## struct hashtable
+### struct hashtable
 basic struct and operations for hashtables (for representing objects)
 ```c
 int i; // current count
@@ -36,7 +36,7 @@ int cap; // current capacity (dynamically increases when load factor > threshold
 struct ht_item **table; // table contents
 ```
 
-## struct ht_item
+### struct ht_item
 hashtable row item. collisions resolved by linking
 ```c
 const char *k; // key
@@ -44,7 +44,7 @@ struct json *v; // value
 struct ht_item *next; // next item (for collisions)
 ```
 
-## struct ls_item
+### struct ls_item
 basic struct for linked lists of json (for representing arrays)
 ```c
 struct json *v; // item value
