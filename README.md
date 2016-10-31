@@ -50,3 +50,13 @@ basic struct for linked lists of json (for representing arrays)
 struct json *v; // item value
 struct ls_item *next; // link to next item
 ```
+
+## TODO
+- enumerate keys and key-value pairs of hashtable
+- iterate through arrays
+- throw more explicit errors when parsing
+- clean up memory after parsing
+- write interface functions to access data through ```struct json```
+- demo cli function to test parsing .json files
+- parse numbers correctly (including floating point and negatives)
+- correctly check escape-codes in strings
