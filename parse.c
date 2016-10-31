@@ -118,23 +118,6 @@ struct json *parse_token(struct parser *p) {
 	return j;
 }
 
-struct json *parse_object(struct parser *p) {
-	
-	struct json *ht = hashtable_make();
-	struct token *cur;
-	for (cur = *p->pos; cur->typ != TT_ACLOSE && cur->typ != TT_END; cur = *p->pos) {
-		char *k = strndup(cur->st, cur->len);
-		if(expect(p, TT_COLON) != 0)
-			return NULL;
-		struct json *v = parse_token(p);
-		if (!v)
-			return NULL;
-		ht_insert(ht->val.obj, k, v);
-		p->pos++;
-	}
-	return ht;
-}
-
 struct json *array_make() {
 	struct json *j = json_make();
 	j->typ = P_ARRAY;
@@ -200,4 +183,29 @@ struct json *parse_array(struct parser *p) {
 			return NULL;
 	}
 	return j;
+}
+
+struct json *parse_object(struct parser *p) {
+	
+	struct json *ht = hashtable_make();
+	struct token *cur;
+	if (expect(p, TT_OOPEN) != 0)
+		return NULL;
+	for (cur = *p->pos; cur->typ != TT_ACLOSE && cur->typ != TT_END; cur = *p->pos) {
+	
+		// TODO: better checking of type of token and length of cur
+		char *k = strndup(cur->st, cur->len);
+		cur = *(++p->pos);
+		
+		if(expect(p, TT_COLON) != 0) {
+			printf("\nno colon mate\n");
+			return NULL;
+		}
+		struct json *v = parse_token(p);
+		if (!v)
+			return NULL;
+		ht_insert(ht->val.obj, k, v);
+		p->pos++;
+	}
+	return ht;
 }
