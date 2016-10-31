@@ -152,6 +152,7 @@ struct ls_item *item_make(struct json *j) {
 
 // TODO: construct correct string and return (don't print in func)
 void print_json(struct json *j) {
+	struct ls_item *cur;
 	switch (j->typ) {
 	case P_STRING:
 		printf("%s", j->val.str);
@@ -160,7 +161,18 @@ void print_json(struct json *j) {
 		printf("%d", j->num);
 		break;
 	case P_BOOLEAN:
+		//printf("%s", j->num == 0 ? "true" : "false");
 		printf("%s", j->num == 0 ? "true" : "false");
+		break;
+	case P_ARRAY:
+		printf("[ ");
+		cur = j->val.arr;
+		for (int i = 0; cur != NULL && i < j->num; cur = cur->next, i++) {
+			print_json(cur->v);
+			if (i < j->num-1)
+				printf(", ");
+		}
+		printf(" ]");
 		break;
 	default:
 		printf("wat");
@@ -169,7 +181,7 @@ void print_json(struct json *j) {
 
 struct json *parse_array(struct parser *p) {
 	struct json *v, *j = array_make();
-	struct ls_item *end = j->val.arr;
+	struct ls_item **end = &j->val.arr;
 	struct token *cur;
 	if (expect(p, TT_AOPEN) != 0)
 		return NULL;
@@ -177,13 +189,11 @@ struct json *parse_array(struct parser *p) {
 		
 		if ((v = parse_token(p)) == NULL)
 			return NULL;
+
+		// fill end and point it at next position to be filled
+		*end = item_make(v);
+		end = &((*end)->next);
 		
-		if (!end) {
-			j->val.arr = item_make(v);
-			end = j->val.arr;
-		} else {
-			end->next = item_make(v);
-		}
 		j->num++;
 		
 		if (expect(p, TT_ACLOSE) != 0 && expect(p, TT_COMMA) != 0)
